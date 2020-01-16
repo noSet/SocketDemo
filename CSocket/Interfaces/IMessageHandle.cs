@@ -6,8 +6,15 @@ using System.Threading.Tasks;
 
 namespace CSocket.Interfaces
 {
-    public interface IMessageHandle<TProtocol>
+    public interface IMessageHandle<TKey, TProtocol>
+        where TProtocol : IProtocol<TKey>
     {
-        void Handle(TProtocol message);
+        void Handle(ChannelHandlerContext<TKey, TProtocol, object> context);
+    }
+
+    public interface IMessageHandle<TKey, TProtocol, TMessage> : IMessageHandle<TKey, TProtocol>
+        where TProtocol : IProtocol<TKey>
+    {
+        void Handle(ChannelHandlerContext<TKey, TProtocol, TMessage> context);
     }
 }

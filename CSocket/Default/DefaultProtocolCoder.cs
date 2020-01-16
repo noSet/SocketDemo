@@ -1,5 +1,4 @@
 ﻿using CSocket.Interfaces;
-using CSocket.Protocol;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,9 +7,9 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CSocket
+namespace CSocket.Default
 {
-    public class DefaultProtocolCoder : IProtocolCoder<DefaultProtocol>
+    public class DefaultProtocolCoder : IProtocolCoder<int, DefaultProtocol>
     {
         private readonly BinaryFormatter _binaryFormatter = new BinaryFormatter();
 

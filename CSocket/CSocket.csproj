@@ -43,19 +43,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Builder.cs" />
+    <Compile Include="ChannelHandlerContext.cs" />
+    <Compile Include="InternalChannelHandlerContext.cs" />
     <Compile Include="CScoketClient.cs" />
     <Compile Include="CScoketServer.cs" />
-    <Compile Include="CSocket.cs" />
+    <Compile Include="SocketPipe.cs" />
     <Compile Include="DefaultChannel.cs" />
-    <Compile Include="DefaultProtocolCoder.cs" />
+    <Compile Include="Default\DefaultProtocolCoder.cs" />
     <Compile Include="DefaultProtocolConverter.cs" />
-    <Compile Include="DefaultUnpacker.cs" />
+    <Compile Include="Default\DefaultUnpacker.cs" />
     <Compile Include="Interfaces\IMessageHandle.cs" />
+    <Compile Include="Interfaces\IProtocol.cs" />
     <Compile Include="Interfaces\IProtocolCoder.cs" />
-    <Compile Include="Interfaces\IUnpacker.cs" />
-    <Compile Include="Pack.cs" />
+    <Compile Include="Interfaces\IMesssageSerializer.cs" />
+    <Compile Include="Interfaces\IProtocolUnpacker.cs" />
+    <Compile Include="CodeMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Protocol\DefaultProtocol.cs" />
+    <Compile Include="Default\DefaultProtocol.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.Threading.Tasks.Dataflow">

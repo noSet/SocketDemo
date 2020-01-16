@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace CSocket.Interfaces
 {
-    public interface IProtocolCoder<TProtocol>
+    public interface IProtocolCoder<TKey, TProtocol>
+        where TProtocol : IProtocol<TKey>
     {
         TProtocol Decoder(byte[] data);
 

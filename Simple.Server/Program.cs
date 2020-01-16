@@ -13,6 +13,8 @@ namespace Simple.Server
 
         static void Main(string[] args)
         {
+
+
             Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             socket.Bind(new IPEndPoint(IPAddress.Any, 9933));
             socket.Listen(0);
