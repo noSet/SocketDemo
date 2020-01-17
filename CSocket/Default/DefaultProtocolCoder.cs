@@ -1,46 +1,41 @@
-﻿using CSocket.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
+using CSocket.Interfaces;
 
 namespace CSocket.Default
 {
     public class DefaultProtocolCoder : IProtocolCoder<int, DefaultProtocol>
     {
-        private readonly BinaryFormatter _binaryFormatter = new BinaryFormatter();
-
         public DefaultProtocol Decoder(byte[] data)
         {
-            //using (MemoryStream stream = new MemoryStream(data))
-            //{
-            //    DefaultProtocol pack = _binaryFormatter.Deserialize(stream) as Pack<T>;
+            DefaultProtocol protocol = new DefaultProtocol();
 
-            //    return pack.Message;
-            //}
+            var lengthBytes = new byte[sizeof(int)];
+            Array.Copy(data, 0, lengthBytes, 0, 4);
 
-            throw new NotImplementedException();
+            protocol.Length = BitConverter.ToInt32(lengthBytes, 0);
+
+            var codeBytes = new byte[sizeof(int)];
+            Array.Copy(data, 4, codeBytes, 0, 4);
+
+            protocol.Code = BitConverter.ToInt32(codeBytes, 0);
+
+            protocol.Message = new byte[data.Length - 2 * sizeof(int)];
+            Array.Copy(data, 8, protocol.Message, 0, protocol.Message.Length);
+
+            return protocol;
         }
 
         public byte[] EnCoder(DefaultProtocol message)
         {
-            //byte[] buffer = null;
-            //Pack<T> pack = new Pack<T>() { Message = message };
+            byte[] bytes = new byte[message.Message.Length + 2 * sizeof(int)];
 
-            //using (MemoryStream stream = new MemoryStream())
-            //{
-            //    _binaryFormatter.Serialize(stream, pack);
+            Array.Copy(BitConverter.GetBytes(message.Length), 0, bytes, 0, sizeof(int));
 
-            //    buffer = stream.ToArray();
-            //}
+            Array.Copy(BitConverter.GetBytes(message.Code), 0, bytes, 4, sizeof(int));
 
-            //Array.Copy(BitConverter.GetBytes(buffer.Length), 0, buffer, 4, 4);
+            Array.Copy(message.Message, 0, bytes, 8, message.Length);
 
-            //return buffer;
-            throw new NotImplementedException();
+            return bytes;
         }
     }
 }

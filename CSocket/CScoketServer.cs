@@ -1,8 +1,8 @@
-﻿using CSocket.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using CSocket.Interfaces;
 
 namespace CSocket
 {
@@ -12,7 +12,7 @@ namespace CSocket
         private readonly Socket _mainSocket;
         private SocketPipe<TKey, TProtocol> _cSocket;
 
-        public List<DefaultChannel<TKey, TProtocol>> Channels { get; set; }
+        public List<DefaultChannel<TKey, TProtocol>> Channels { get; } = new List<DefaultChannel<TKey, TProtocol>>();
 
         public CScoketServer(SocketPipe<TKey, TProtocol> cSocket)
         {

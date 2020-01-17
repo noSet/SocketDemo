@@ -1,7 +1,6 @@
-﻿using CSocket.Interfaces;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
+using CSocket.Interfaces;
 
 namespace CSocket
 {
@@ -12,10 +11,10 @@ namespace CSocket
         {
             public IProtocolUnpacker Unpacker { get; set; }
 
-            public IProtocolCoder<TKey, TProtocol> Coder { get; set; }
+            public IProtocolCoder<TKey, TProtocol> ProtocolCoder { get; set; }
         }
 
-        public static BuilderCore<TKey, TProtocol> UseProtocol<TProtocol, TKey>(Action<ProtocolOption<TKey, TProtocol>> steupOptions)
+        public static BuilderCore<TKey, TProtocol> UseProtocol<TKey, TProtocol>(Action<ProtocolOption<TKey, TProtocol>> steupOptions)
             where TProtocol : IProtocol<TKey>
         {
             if (steupOptions is null)
@@ -26,7 +25,7 @@ namespace CSocket
             ProtocolOption<TKey, TProtocol> option = new ProtocolOption<TKey, TProtocol>();
             steupOptions(option);
 
-            return new BuilderCore<TKey, TProtocol>(option.Unpacker, option.Coder);
+            return new BuilderCore<TKey, TProtocol>(option.Unpacker, option.ProtocolCoder);
         }
 
         public class BuilderCore<TKey, TProtocol>
@@ -34,9 +33,9 @@ namespace CSocket
         {
             private readonly IProtocolUnpacker _unpacker;
             private readonly IProtocolCoder<TKey, TProtocol> _protocolCoder;
-            private readonly Dictionary<TKey, IMessageSerializer> _messageSerializer = new Dictionary<TKey, IMessageSerializer>();
+            private IMessageSerializer _messageSerializer;
+            private readonly Dictionary<TKey, Type> _messageMapping = new Dictionary<TKey, Type>();
             private readonly Dictionary<TKey, IMessageHandle<TKey, TProtocol>> _messageHandle = new Dictionary<TKey, IMessageHandle<TKey, TProtocol>>();
-            private IMesssageSerializer<object> _defaultSerializer;
 
             internal BuilderCore(IProtocolUnpacker unpacker, IProtocolCoder<TKey, TProtocol> coder)
             {
@@ -44,26 +43,14 @@ namespace CSocket
                 _protocolCoder = coder;
             }
 
-            public BuilderCore<TKey, TProtocol> UseDefaultSerializer(IMesssageSerializer<object> serializer)
+            public BuilderCore<TKey, TProtocol> UseMessageSerializer(IMessageSerializer messageSerializer)
             {
-                if (serializer is null)
+                if (messageSerializer is null)
                 {
-                    throw new ArgumentNullException(nameof(serializer));
+                    throw new ArgumentNullException(nameof(messageSerializer));
                 }
 
-                _defaultSerializer = serializer;
-
-                return this;
-            }
-
-            public BuilderCore<TKey, TProtocol> RegistMessageSerializer<TMessage>(TKey key, IMesssageSerializer<TMessage> serializer)
-            {
-                if (serializer is null)
-                {
-                    throw new ArgumentNullException(nameof(serializer));
-                }
-
-                _messageSerializer.Add(key, serializer);
+                _messageSerializer = messageSerializer;
 
                 return this;
             }
@@ -75,6 +62,7 @@ namespace CSocket
                     throw new ArgumentNullException(nameof(messageHandle));
                 }
 
+                _messageMapping.Add(key, typeof(TMessage));
                 _messageHandle.Add(key, messageHandle);
 
                 return this;
@@ -82,7 +70,7 @@ namespace CSocket
 
             public CScoketServer<TKey, TProtocol> Build()
             {
-                SocketPipe<TKey, TProtocol> cSocket = new SocketPipe<TKey, TProtocol>(_unpacker, _protocolCoder, _defaultSerializer, _messageSerializer, _messageHandle);
+                SocketPipe<TKey, TProtocol> cSocket = new SocketPipe<TKey, TProtocol>(_unpacker, _protocolCoder, _messageMapping, _messageSerializer, _messageHandle);
 
                 return new CScoketServer<TKey, TProtocol>(cSocket);
             }

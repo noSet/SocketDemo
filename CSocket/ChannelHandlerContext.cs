@@ -1,5 +1,5 @@
-﻿using CSocket.Interfaces;
-using System;
+﻿using System;
+using CSocket.Interfaces;
 
 namespace CSocket
 {

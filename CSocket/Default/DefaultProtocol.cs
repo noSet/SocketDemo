@@ -4,7 +4,7 @@ namespace CSocket.Default
 {
     public class DefaultProtocol : IProtocol<int>
     {
-        public int Lenth { get; set; }
+        public int Length { get; set; }
 
         public int Code { get; set; }
 

@@ -1,6 +1,6 @@
-﻿using CSocket.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using CSocket.Interfaces;
 
 namespace CSocket.Default
 {
